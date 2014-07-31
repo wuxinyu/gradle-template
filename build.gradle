@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'idea'
 apply from: 'dependencies.gradle'
 
 sourceCompatibility = 1.6
@@ -31,6 +32,17 @@ subprojects {
         mavenCentral()
     }
 
+
+    buildscript {
+        repositories {
+            maven { url "http://repo.spring.io/libs-release" }
+        }
+        dependencies {
+            classpath(lib."b-plugin")
+        }
+    }
+
+
     jar {
         baseName = "$project.name"
         version =  "$project.version"
@@ -52,9 +64,10 @@ subprojects {
         ext.jarTree += fileTree(dir: rootProjectLibs, include: '**/*.jar')
         compile jarTree
 
+        compile(lib.'b-actuator')
+
         testCompile (
-            libraries.'junit',
-            libraries.'spring-test'
+            lib.'b-test'
         )
     }
 
@@ -63,5 +76,11 @@ subprojects {
     task listJars(description: 'Display all compile jars.') << {
         configurations.compile.each { File file -> println file.name }
     }
+
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '1.11'
+    }
+
 
 }

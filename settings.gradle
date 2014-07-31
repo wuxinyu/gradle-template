@@ -1,3 +1,4 @@
-rootProject.name = 'ori'
+rootProject.name = 'gradle-boot'
 
+include 'contact'
 include 'freelancer'

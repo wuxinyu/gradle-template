@@ -1,0 +1,67 @@
+apply plugin: 'java'
+apply from: 'dependencies.gradle'
+
+sourceCompatibility = 1.6
+version = '1.0'
+
+buildscript {
+    repositories {
+        maven { url 'http://dl.bintray.com/cjstehno/public/' }
+        maven { url 'https://raw.githubusercontent.com/ben-manes/gradle-versions-plugin/mvnrepo/'}
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'gradle-templates:gradle-templates:1.5'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.5-beta-5'
+    }
+}
+
+apply plugin:'templates'
+apply plugin: 'versions'
+
+subprojects { 
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    sourceCompatibility = '1.6'
+
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+    
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    jar {
+        baseName = "$project.name"
+        version =  "$project.version"
+    }
+
+    configurations {
+        // 
+        // 所有需要忽略的包定义在此
+        // 
+        all*.exclude group: 'commons-httpclient'
+        all*.exclude group: 'commons-logging'
+        all*.exclude group: 'commons-beanutils', module: 'commons-beanutils'
+    }
+
+    dependencies {
+        
+        ext.jarTree = fileTree(dir: 'libs', include: '**/*.jar')
+        ext.rootProjectLibs = new File(rootProject.rootDir, 'libs').getAbsolutePath()
+        ext.jarTree += fileTree(dir: rootProjectLibs, include: '**/*.jar')
+        compile jarTree
+
+        testCompile (
+            libraries.'junit',
+            libraries.'spring-test'
+        )
+    }
+
+    // 显示当前项目下所有用于 compile 的 jar.
+    // 
+    task listJars(description: 'Display all compile jars.') << {
+        configurations.compile.each { File file -> println file.name }
+    }
+
+}

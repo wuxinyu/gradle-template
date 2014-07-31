@@ -1,3 +1,0 @@
-apply plugin: 'jetty'
-
-group = 'ui-front'

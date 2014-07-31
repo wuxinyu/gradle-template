@@ -2,3 +2,5 @@ rootProject.name = 'gradle-boot'
 
 include 'contact'
 include 'freelancer'
+include 'account'
+include 'project'

@@ -46,6 +46,10 @@ subprojects {
     jar {
         baseName = "$project.name"
         version =  "$project.version"
+        manifest {
+            attributes("Implementation-Title": "Gradle")
+            attributes("from": "biz4u")
+        }
     }
 
     configurations {
